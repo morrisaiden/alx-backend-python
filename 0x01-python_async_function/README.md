@@ -1,0 +1,1 @@
+In Python, asynchronous programming allows you to write programs that can handle multiple tasks seemingly at the same time without blocking the execution of other tasks. This is particularly useful when dealing with I/O-bound operations like network requests, file I/O, or database queries.
