@@ -4,7 +4,7 @@ Unittests for the GithubOrgClient class.
 """
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
 
@@ -25,18 +25,32 @@ class TestGithubOrgClient(unittest.TestCase):
             org_name (str): The organization name to test.
             mock_get_json (MagicMock): Mocked version of get_json.
         """
-        # Create an instance of GithubOrgClient with the provided org_name
+
         client = GithubOrgClient(org_name)
 
-        # Call the org method
         result = client.org
 
-        # Check that get_json was called once with the expected URL
         expected_url = f"https://api.github.com/orgs/{org_name}"
         mock_get_json.assert_called_once_with(expected_url)
 
-        # Check that the returned value is as expected
         self.assertEqual(result, {"login": "mock_org"})
+
+    @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
+    def test_public_repos_url(self, mock_org):
+        """
+        Test that GithubOrgClient._public_repos_url returns the correct URL
+        based on the mocked org payload.
+        """
+
+        mock_org.return_value = {
+            "repos_url": "https://api.github.com/orgs/mock_org/repos"
+            }
+
+        client = GithubOrgClient("mock_org")
+
+        result = client._public_repos_url
+
+        self.assertEqual(result, "https://api.github.com/orgs/mock_org/repos")
 
 
 if __name__ == "__main__":
